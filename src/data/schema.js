@@ -16,7 +16,13 @@ let linkType = new GraphQLObjectType({
     })
 });
 
-
+let nameObj = new GraphQLObjectType({
+  name: 'names',
+  fields: () => ({
+    id: { type: GraphQLString },
+    name: { type: GraphQLString }
+  })
+});
 let counterType = new GraphQLObjectType({
   name: 'Counter',
   fields: () => ({
@@ -40,6 +46,12 @@ let schema = new GraphQLSchema({
       links: {
         type: new GraphQLList(linkType),
         resolve: () => DBClient.findAll('links')
+      },
+      names: {
+        type: new GraphQLList(nameObj),
+        resolve: () => {
+          return [{id: 1, name: 'a'},{id: 2, name: 'b'}];
+        }
       }
 
     })

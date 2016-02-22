@@ -20,7 +20,6 @@
   "author": "Doron Segal",
   "license": "ISC",
   "dependencies": {
-    "babel": "^6.5.2",
     "babel-cli": "^6.5.1",
     "babel-core": "^6.5.2",
     "babel-loader": "^6.2.3",
