@@ -2,11 +2,27 @@ import {
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLInt,
-  GraphQLString
+  GraphQLString,
+  GraphQLList
 } from 'graphql';
-
+import DBClient from '../db';
 let counter = 100;
+let linkType = new GraphQLObjectType({
+    name: 'Link',
+    fields: () => ({
+      _id: {type: GraphQLString },
+      title: { type: GraphQLString },
+      url: { type: GraphQLString }
+    })
+});
 
+
+let counterType = new GraphQLObjectType({
+  name: 'Counter',
+  fields: () => ({
+    counter: { type: GraphQLInt }
+  })
+})
 let schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'Query',
@@ -20,7 +36,12 @@ let schema = new GraphQLSchema({
         resolve: () => {
           return 'doron';
         }
+      },
+      links: {
+        type: new GraphQLList(linkType),
+        resolve: () => DBClient.findAll('links')
       }
+
     })
   }),
 

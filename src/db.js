@@ -1,51 +1,72 @@
 import {MongoClient} from 'mongodb';
 import config from './config';
+
 class DBClient {
   constructor(){
-    MongoClient.connect(config.mongodb, (err, db) => {
-      if (err) {
-        throw err;
+    //Should try to connect to DB
+  }
+
+  connectWithPromise(){
+    return new Promise((resolve, reject) => {
+      if (this.db) {
+        return resolve(this.db);
+      } else{
+        MongoClient.connect(config.mongodb, (err, db) => {
+          if (err) {
+            return reject(err);
+          }
+          this.db = db;
+          return resolve(db);
+        });
       }
-      this.db = db;
     });
   }
 
-  insert(documents, collectionName, callback){
-    let collection = this.db.collection(collectionName);
-    collection.insertMany([
-      documents
-    ], function(err, result) {
-      callback(err, result);
+  insert(documents, collectionName){
+    this.connectWithPromise().then((db) => {
+      let collection = this.db.collection(collectionName);
+      return collection.insertMany([documents]);
+    });
+
+  }
+
+  update(query, collectionName){
+    this.connectWithPromise().then((db) => {
+      let collection = this.db.collection(collectionName);
+      return collection.update(query);
     });
   }
 
-  update(query, collectionName, callback){
-    let collection = this.db.collection(collectionName);
-    collection.updateOne(query, function(err, result) {
-      callback(err, result);
+  delete(query, collectionName){
+    this.connectWithPromise().then((db) => {
+      let collection = this.db.collection(collectionName);
+      return collection.deleteOne(query);
     });
   }
 
-  delete(query, collectionName, callback){
-    let collection = this.db.collection(collectionName);
-    collection.deleteOne(query, function(err, result) {
-      callback(err, result);
+  findAll(collectionName){
+    return this.connectWithPromise().then((db) => {
+      let collection = db.collection(collectionName);
+      return collection.find({}).toArray().then((links) => {
+        return links;
+      });
+    });
+
+  }
+
+  findOne(query, collectionName){
+    return this.connectWithPromise().then((db) => {
+      let collection = this.db.collection(collectionName);
+      return collection.findOne(query).then((links) => {
+        return links;
+      });
     });
   }
 
-  findAll(collectionName, callback){
-    let collection = this.db.collection(collectionName);
-    collection.find({}).toArray(function(err, docs) {
-      callback(err, docs);
-    });
+  getDB(){
+    return this.db;
   }
 
-  findOne(query, collectionName, callback){
-    let collection = this.db.collection(collectionName);
-    collection.findOne(query,function(err, doc) {
-      callback(err, doc);
-    });
-  }
 }
 
 
