@@ -31,7 +31,7 @@
     "express-graphql": "^0.4.9",
     "flux": "^2.1.1",
     "graphql": "^0.4.18",
-    "jquery": "^2.2.0",
+    "jquery": "^3.5.0",
     "kerberos": "0.0.18",
     "mongodb": "^2.1.7",
     "react": "^0.14.7",
